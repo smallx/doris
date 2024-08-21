@@ -29,6 +29,7 @@ import org.apache.doris.persist.BarrierLog;
 import org.apache.doris.persist.BatchModifyPartitionsInfo;
 import org.apache.doris.persist.BinlogGcInfo;
 import org.apache.doris.persist.DropPartitionInfo;
+import org.apache.doris.persist.ModifyCommentOperationLog;
 import org.apache.doris.persist.ModifyTablePropertyOperationLog;
 import org.apache.doris.persist.ReplacePartitionOperationLog;
 import org.apache.doris.persist.TableAddOrDropColumnsInfo;
@@ -315,6 +316,17 @@ public class BinlogManager {
         TBinlogType type = TBinlogType.TRUNCATE_TABLE;
         TruncateTableRecord record = new TruncateTableRecord(info);
         String data = record.toJson();
+
+        addBinlog(dbId, tableIds, commitSeq, timestamp, type, data, false, info);
+    }
+
+    public void addModifyComment(ModifyCommentOperationLog info, long commitSeq) {
+        long dbId = info.getDbId();
+        List<Long> tableIds = Lists.newArrayList();
+        tableIds.add(info.getTblId());
+        long timestamp = -1;
+        TBinlogType type = TBinlogType.MODIFY_COMMENT;
+        String data = info.toJson();
 
         addBinlog(dbId, tableIds, commitSeq, timestamp, type, data, false, info);
     }
