@@ -543,7 +543,8 @@ public class Load {
      */
     public static void initColumns(Table tbl, List<ImportColumnDesc> columnExprs,
             Map<String, Pair<String, List<String>>> columnToHadoopFunction) throws UserException {
-        initColumns(tbl, columnExprs, columnToHadoopFunction, null, null, null, null, null, null, null, false, false);
+        initColumns(tbl, columnExprs, columnToHadoopFunction, null, null, null, null, null, null, null, false, false,
+                false);
     }
 
     /*
@@ -553,11 +554,11 @@ public class Load {
     public static void initColumns(Table tbl, LoadTaskInfo.ImportColumnDescs columnDescs,
             Map<String, Pair<String, List<String>>> columnToHadoopFunction, Map<String, Expr> exprsByName,
             Analyzer analyzer, TupleDescriptor srcTupleDesc, Map<String, SlotDescriptor> slotDescByName,
-            List<Integer> srcSlotIds, TFileFormatType formatType, List<String> hiddenColumns, boolean isPartialUpdate)
-            throws UserException {
+            List<Integer> srcSlotIds, TFileFormatType formatType, List<String> hiddenColumns, boolean isPartialUpdate,
+            boolean isStrictMode) throws UserException {
         rewriteColumns(columnDescs);
         initColumns(tbl, columnDescs.descs, columnToHadoopFunction, exprsByName, analyzer, srcTupleDesc, slotDescByName,
-                srcSlotIds, formatType, hiddenColumns, true, isPartialUpdate);
+                srcSlotIds, formatType, hiddenColumns, true, isPartialUpdate, isStrictMode);
     }
 
     /*
@@ -572,7 +573,7 @@ public class Load {
             Map<String, Pair<String, List<String>>> columnToHadoopFunction, Map<String, Expr> exprsByName,
             Analyzer analyzer, TupleDescriptor srcTupleDesc, Map<String, SlotDescriptor> slotDescByName,
             List<Integer> srcSlotIds, TFileFormatType formatType, List<String> hiddenColumns,
-            boolean needInitSlotAndAnalyzeExprs, boolean isPartialUpdate) throws UserException {
+            boolean needInitSlotAndAnalyzeExprs, boolean isPartialUpdate, boolean isStrictMode) throws UserException {
         // We make a copy of the columnExprs so that our subsequent changes
         // to the columnExprs will not affect the original columnExprs.
         // skip the mapping columns not exist in schema
@@ -644,10 +645,9 @@ public class Load {
                 exprsByName.put(column.getName(), NullLiteral.create(column.getType()));
                 continue;
             }
-            if (isPartialUpdate) {
+            if (isPartialUpdate && isStrictMode) {
                 continue;
             }
-            //continue;
             throw new DdlException("Column has no default value. column: " + columnName);
         }
 

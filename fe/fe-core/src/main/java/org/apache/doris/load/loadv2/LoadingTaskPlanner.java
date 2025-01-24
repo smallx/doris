@@ -204,7 +204,7 @@ public class LoadingTaskPlanner {
         ScanNode scanNode;
         scanNode = new FileLoadScanNode(new PlanNodeId(nextNodeId++), scanTupleDesc);
         ((FileLoadScanNode) scanNode).setLoadInfo(loadJobId, txnId, table, brokerDesc, fileGroups,
-                fileStatusesList, filesAdded, strictMode, loadParallelism, userInfo);
+                fileStatusesList, filesAdded, strictMode, loadParallelism, isPartialUpdate);
         scanNode.init(analyzer);
         scanNode.finalize(analyzer);
         scanNodes.add(scanNode);

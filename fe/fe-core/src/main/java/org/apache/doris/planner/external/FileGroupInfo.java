@@ -90,7 +90,7 @@ public class FileGroupInfo {
     // for broker load
     public FileGroupInfo(long loadJobId, long txnId, Table targetTable, BrokerDesc brokerDesc,
             BrokerFileGroup fileGroup, List<TBrokerFileStatus> fileStatuses, int filesAdded, boolean strictMode,
-            int loadParallelism) {
+            int loadParallelism, boolean isPartialUpdate) {
         this.jobType = JobType.BULK_LOAD;
         this.loadJobId = loadJobId;
         this.txnId = txnId;
@@ -102,6 +102,7 @@ public class FileGroupInfo {
         this.strictMode = strictMode;
         this.loadParallelism = loadParallelism;
         this.fileType = brokerDesc.getFileType();
+        this.isPartialUpdate = isPartialUpdate;
     }
 
     // for stream load
