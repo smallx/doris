@@ -29,7 +29,6 @@ import org.apache.doris.analysis.SlotDescriptor;
 import org.apache.doris.analysis.SlotRef;
 import org.apache.doris.analysis.StringLiteral;
 import org.apache.doris.analysis.TupleDescriptor;
-import org.apache.doris.analysis.UserIdentity;
 import org.apache.doris.catalog.AggregateType;
 import org.apache.doris.catalog.Column;
 import org.apache.doris.catalog.FunctionSet;
@@ -96,11 +95,12 @@ public class FileLoadScanNode extends FileScanNode {
     // Only for broker load job.
     public void setLoadInfo(long loadJobId, long txnId, Table targetTable, BrokerDesc brokerDesc,
             List<BrokerFileGroup> fileGroups, List<List<TBrokerFileStatus>> fileStatusesList,
-            int filesAdded, boolean strictMode, int loadParallelism, UserIdentity userIdentity) {
+            int filesAdded, boolean strictMode, int loadParallelism, boolean isPartialUpdate) {
         Preconditions.checkState(fileGroups.size() == fileStatusesList.size());
         for (int i = 0; i < fileGroups.size(); ++i) {
             FileGroupInfo fileGroupInfo = new FileGroupInfo(loadJobId, txnId, targetTable, brokerDesc,
-                    fileGroups.get(i), fileStatusesList.get(i), filesAdded, strictMode, loadParallelism);
+                    fileGroups.get(i), fileStatusesList.get(i), filesAdded, strictMode, loadParallelism,
+                    isPartialUpdate);
             fileGroupInfos.add(fileGroupInfo);
         }
     }
